@@ -5,7 +5,7 @@
       xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
       PolicySchemaVersion="0.3.0.0"
       TenantId="samplemwb2ctenant.onmicrosoft.com"
-      PolicyId="B2C_1A_SimplestSsoCustomPolicy_A"
+      PolicyId="B2C_1A_SimplestSsoCustomPolicy_B"
       PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_SimplestSsoCustomPolicy"
       DeploymentMode="Development"
         UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
@@ -96,17 +96,30 @@
                         <OutputClaims>
                             <OutputClaim ClaimTypeReferenceId="login"/>
                         </OutputClaims>
+                        <UseTechnicalProfileForSessionManagement ReferenceId="SM-sso" />
                     </TechnicalProfile>
                 </TechnicalProfiles>
             </ClaimsProvider>
 
             <ClaimsProvider>
+
                 <DisplayName>Session management </DisplayName>
+
                 <TechnicalProfiles>
-                <TechnicalProfile Id="SM-jwt-issuer">
-                    <DisplayName>Session Management Provider</DisplayName>
-                    <Protocol Name="Proprietary" Handler="Web.TPEngine.SSO.OAuthSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-                  </TechnicalProfile>
+                    <TechnicalProfile Id="SM-jwt-issuer">
+                        <DisplayName>Session Management Provider</DisplayName>
+                        <Protocol Name="Proprietary" Handler="Web.TPEngine.SSO.OAuthSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                    </TechnicalProfile>
+
+                    <TechnicalProfile Id="SM-sso">
+                        <DisplayName>Session Management Provider</DisplayName>
+                        <Protocol Name="Proprietary" Handler="Web.TPEngine.SSO.DefaultSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                        <PersistedClaims>
+                          <PersistedClaim ClaimTypeReferenceId="login" />
+                          <PersistedClaim ClaimTypeReferenceId="message" />
+                          <PersistedClaim ClaimTypeReferenceId="objectId" />
+                        </PersistedClaims>
+                      </TechnicalProfile>
                 </TechnicalProfiles>
             </ClaimsProvider>
 
