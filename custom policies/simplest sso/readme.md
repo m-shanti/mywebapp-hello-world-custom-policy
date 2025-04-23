@@ -12,3 +12,10 @@
 - For comparison in Ocean custom policy
   - User journey has technical profile `<UserJourney Id="AgentUserADJourney" DefaultCpimIssuerTechnicalProfileReferenceId="JwtIssuer">` that is of the type `OpenIdConnect` and that has connected `<UseTechnicalProfileForSessionManagement ReferenceId="SM-jwt-issuer" />`
   - Relying party has technical profile `<TechnicalProfile Id="PolicyProfile">` of the type `OpenIdConnect`
+- After updating custom policy in place, without changing the name, we get error. ?dummy= param doesn't help. After some time error disappear
+- Application Insights
+  - https://learn.microsoft.com/en-us/azure/active-directory-b2c/troubleshoot-with-application-insights?pivots=b2c-custom-policy
+  - https://learn.microsoft.com/en-us/azure/active-directory-b2c/analytics-with-application-insights?pivots=b2c-custom-policy
+
+# SSO
+- We read *To configure the Azure AD B2C sessions between Azure AD B2C and a relying party application, in the attribute of the UseTechnicalProfileForSessionManagement element, add a reference to OAuthSSOSessionProvider SSO session.* [Session management](https://learn.microsoft.com/en-us/azure/active-directory-b2c/jwt-issuer-technical-profile#session-management)

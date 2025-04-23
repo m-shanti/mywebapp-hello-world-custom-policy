@@ -5,7 +5,7 @@
       xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
       PolicySchemaVersion="0.3.0.0"
       TenantId="samplemwb2ctenant.onmicrosoft.com"
-      PolicyId="B2C_1A_SimplestSsoCustomPolicy"
+      PolicyId="B2C_1A_SimplestSsoCustomPolicy_A"
       PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_SimplestSsoCustomPolicy"
       DeploymentMode="Development"
         UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
@@ -100,6 +100,16 @@
                 </TechnicalProfiles>
             </ClaimsProvider>
 
+            <ClaimsProvider>
+                <DisplayName>Session management </DisplayName>
+                <TechnicalProfiles>
+                <TechnicalProfile Id="SM-jwt-issuer">
+                    <DisplayName>Session Management Provider</DisplayName>
+                    <Protocol Name="Proprietary" Handler="Web.TPEngine.SSO.OAuthSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                  </TechnicalProfile>
+                </TechnicalProfiles>
+            </ClaimsProvider>
+
 
 
         </ClaimsProviders>
@@ -140,6 +150,7 @@
                 <OutputClaim ClaimTypeReferenceId="login" DefaultValue="empty login"/>
               </OutputClaims>
               <SubjectNamingInfo ClaimType="sub" />
+              <UseTechnicalProfileForSessionManagement ReferenceId="SM-jwt-issuer" />
             </TechnicalProfile>
 
 
