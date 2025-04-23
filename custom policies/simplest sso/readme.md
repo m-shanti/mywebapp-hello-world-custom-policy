@@ -1,7 +1,7 @@
 - input login
 - the policy add claims `login` and some additional claim `lastname`
 - sso should work
-  - I can enter the same application in other tab without entering credentials
+  - When I remove appllication cookie `.AspNetCore.Cookies` then roundtrip to B2C will occur (invisible) and I will enter the same application without entering credentials
   - I can enter other application without entering credentials
 - sso doesn't require saving any objects in B2C directory
 
