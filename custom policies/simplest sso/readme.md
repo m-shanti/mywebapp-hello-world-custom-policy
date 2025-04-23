@@ -19,3 +19,4 @@
 
 # SSO
 - We read *To configure the Azure AD B2C sessions between Azure AD B2C and a relying party application, in the attribute of the UseTechnicalProfileForSessionManagement element, add a reference to OAuthSSOSessionProvider SSO session.* [Session management](https://learn.microsoft.com/en-us/azure/active-directory-b2c/jwt-issuer-technical-profile#session-management)
+- After adding OAuthSSOSessionProvider SSO didn't appear but provider only manages logout *This type of session provider allows Azure AD B2C to track all OAuth2 or OpenId Connect applications the user logged into. During the sign-out of one application, Azure AD B2C will attempt to call the logout endpoints of all other known logged in applications. This functionality is built in to the session provider.* [as above]
