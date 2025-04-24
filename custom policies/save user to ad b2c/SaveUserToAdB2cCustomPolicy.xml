@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <TrustFrameworkPolicy
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+      PolicySchemaVersion="0.3.0.0"
+      TenantId="samplemwb2ctenant.onmicrosoft.com"
+      PolicyId="B2C_1A_SaveUserToAdB2cCustomPolicy_A"
+      PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_SimplestSsoCustomPolicy"
+      DeploymentMode="Development"
+        UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
+
+        <BuildingBlocks>
+            <!-- Building Blocks Here-->
+
+            <ClaimsSchema>
+                <ClaimType Id="objectId">
+                    <DisplayName>unique object Id for subject of the claims being returned</DisplayName>
+                    <DataType>string</DataType>
+                </ClaimType>   
+
+                <ClaimType Id="message">
+                    <DisplayName>Will hold Hello World message</DisplayName>
+                    <DataType>string</DataType>
+                </ClaimType>
+
+                <ClaimType Id="login">
+                    <DisplayName>Login</DisplayName>
+                    <DataType>string</DataType>
+                    <UserHelpText>Your login</UserHelpText>
+                    <UserInputType>TextBox</UserInputType>
+                </ClaimType>
+
+            </ClaimsSchema>
+
+            <ContentDefinitions>
+                <ContentDefinition Id="SelfAssertedContentDefinition">
+                    <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+                    <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+                    <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.7</DataUri>
+                </ContentDefinition>
+            </ContentDefinitions>
+
+        </BuildingBlocks>
+
+        <ClaimsProviders>
+            <!-- Claims Providers Here-->
+            <ClaimsProvider>
+                <DisplayName>Token Issuer</DisplayName>
+                <TechnicalProfiles>
+                  <TechnicalProfile Id="JwtIssuer">
+                    <DisplayName>JWT Issuer</DisplayName>
+                    <Protocol Name="None" />
+                    <OutputTokenFormat>JWT</OutputTokenFormat>
+                    <Metadata>
+                      <Item Key="client_id">{service:te}</Item>
+                      <Item Key="issuer_refresh_token_user_identity_claim_type">objectId</Item>
+                      <Item Key="SendTokenResponseBodyWithJsonNumbers">true</Item>
+                    </Metadata>
+                    <CryptographicKeys>
+                      <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+                      <Key Id="issuer_refresh_token_key" StorageReferenceId="B2C_1A_TokenEncryptionKeyContainer" />
+                    </CryptographicKeys>
+                  </TechnicalProfile>
+                </TechnicalProfiles>
+              </ClaimsProvider>
+          
+              <ClaimsProvider>
+                <!-- The technical profile(s) defined in this section is required by the framework to be included in all custom policies. -->
+                <DisplayName>Trustframework Policy Engine TechnicalProfiles</DisplayName>
+                <TechnicalProfiles>
+                  <TechnicalProfile Id="TpEngine_c3bd4fe2-1775-4013-b91d-35f16d377d13">
+                    <DisplayName>Trustframework Policy Engine Default Technical Profile</DisplayName>
+                    <Protocol Name="None" />
+                    <Metadata>
+                      <Item Key="url">{service:te}</Item>
+                    </Metadata>
+                  </TechnicalProfile>
+                </TechnicalProfiles>
+                
+              </ClaimsProvider>
+
+              <ClaimsProvider>
+
+                <DisplayName>Technical Profiles to collect user's details </DisplayName>
+                <TechnicalProfiles>
+                    <TechnicalProfile Id="UserInformationCollector">
+                        <DisplayName>Input login</DisplayName>
+                        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+                        <Metadata>
+                            <Item Key="ContentDefinitionReferenceId">SelfAssertedContentDefinition</Item>
+                        </Metadata>
+                        <DisplayClaims>
+                            <DisplayClaim ClaimTypeReferenceId="login" Required="true"/>
+                        </DisplayClaims>
+                        <OutputClaims>
+                            <OutputClaim ClaimTypeReferenceId="login"/>
+                        </OutputClaims>
+                        <UseTechnicalProfileForSessionManagement ReferenceId="SM-sso" />
+                    </TechnicalProfile>
+                </TechnicalProfiles>
+            </ClaimsProvider>
+
+            <ClaimsProvider>
+
+                <DisplayName>Session management </DisplayName>
+
+                <TechnicalProfiles>
+                    <TechnicalProfile Id="SM-jwt-issuer">
+                        <DisplayName>Session Management Provider</DisplayName>
+                        <Protocol Name="Proprietary" Handler="Web.TPEngine.SSO.OAuthSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                    </TechnicalProfile>
+
+                    <TechnicalProfile Id="SM-sso">
+                        <DisplayName>Session Management Provider</DisplayName>
+                        <Protocol Name="Proprietary" Handler="Web.TPEngine.SSO.DefaultSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                        <PersistedClaims>
+                          <PersistedClaim ClaimTypeReferenceId="login" />
+                          <PersistedClaim ClaimTypeReferenceId="message" />
+                          <PersistedClaim ClaimTypeReferenceId="objectId" />
+                        </PersistedClaims>
+                      </TechnicalProfile>
+                </TechnicalProfiles>
+            </ClaimsProvider>
+
+            <ClaimsProvider>
+                    <DisplayName>Azure AD Technical Profiles</DisplayName>
+                    <TechnicalProfiles>
+
+                        <TechnicalProfile Id="AAD-UserWrite">
+                            <DisplayName>Write user information to AAD</DisplayName>
+                            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                            <Metadata>
+                                <Item Key="Operation">Write</Item>
+                                <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
+                                <Item Key="UserMessageIfClaimsPrincipalAlreadyExists">The account already exists. Try to create another account</Item>
+                            </Metadata>
+                            <InputClaims>
+                                <!-- The InputClaims element contains a claim, which is used to look up an account in the directory, or create a new one. -->
+                                <InputClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" Required="true" />
+                            </InputClaims>
+                            <PersistedClaims>
+                                <!-- The name of the claim is the name of the Microsoft Entra attribute unless the PartnerClaimType attribute is specified, which contains the Microsoft Entra attribute name. -->
+                                <PersistedClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" />
+                                <PersistedClaim ClaimTypeReferenceId="login" PartnerClaimType="displayName"/>
+                            </PersistedClaims>
+                            <OutputClaims>
+                                <OutputClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" />
+                            </OutputClaims>
+                        </TechnicalProfile>
+
+                    </TechnicalProfiles>
+            </ClaimsProvider>
+
+
+
+        </ClaimsProviders>
+
+        <UserJourneys>
+            <!-- User Journeys Here-->
+
+            <UserJourney Id="HelloWorldJourney">
+                <OrchestrationSteps>
+                    
+                    <OrchestrationStep Order="1" Type="ClaimsExchange">
+                        <ClaimsExchanges>
+                            <ClaimsExchange Id="GetUserInformationClaimsExchange" TechnicalProfileReferenceId="UserInformationCollector"/>
+                        </ClaimsExchanges>
+                    </OrchestrationStep>
+
+                    <OrchestrationStep Order="2" Type="ClaimsExchange">
+                        <ClaimsExchanges>
+                          <ClaimsExchange Id="WriteUserToAAD" TechnicalProfileReferenceId="AAD-UserWrite" />
+                        </ClaimsExchanges>
+                    </OrchestrationStep>
+                      
+                    <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
+                
+                </OrchestrationSteps>
+              </UserJourney>
+        </UserJourneys>
+
+        <RelyingParty>
+            <!-- 
+                Relying Party Here that's your policy’s entry point
+                Specify the User Journey to execute 
+                Specify the claims to include in the token that is returned when the policy runs
+            -->
+            <DefaultUserJourney ReferenceId="HelloWorldJourney"/>
+
+            <UserJourneyBehaviors>
+                <JourneyInsights InstrumentationKey="7f3c6c11-451b-4583-97b8-03e9cd287ed8" TelemetryEngine="ApplicationInsights" ConnectionString="InstrumentationKey=7f3c6c11-451b-4583-97b8-03e9cd287ed8;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/;ApplicationId=69530b56-6870-4626-8ef3-88eaad8b6d34" DeveloperMode="true" ClientEnabled="false" ServerEnabled="true" TelemetryVersion="1.0.0" />
+            </UserJourneyBehaviors>
+
+            <TechnicalProfile Id="HelloWorldPolicyProfile">
+              <DisplayName>Hello World Policy Profile</DisplayName>
+              <Protocol Name="OpenIdConnect" />
+              <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub" DefaultValue="abcd-1234-efgh-5678-ijkl-etc."/>
+                <OutputClaim ClaimTypeReferenceId="message" DefaultValue="Hello World!"/>
+                <OutputClaim ClaimTypeReferenceId="login" DefaultValue="empty login"/>
+              </OutputClaims>
+              <SubjectNamingInfo ClaimType="sub" />
+              <UseTechnicalProfileForSessionManagement ReferenceId="SM-jwt-issuer" />
+            </TechnicalProfile>
+
+
+
+        </RelyingParty>
+    </TrustFrameworkPolicy>
