@@ -15,7 +15,7 @@
 - After adding OAuthSSOSessionProvider SSO didn't appear but provider only manages logout:
 
      *This type of session provider allows Azure AD B2C to track all OAuth2 or OpenId Connect applications the user logged into. During the sign-out of one application, Azure AD B2C will attempt to call the logout endpoints of all other known logged in applications. This functionality is built in to the session provider.* [as above]
-     
+
 ## DefaultSSOSessionProvider
 - Define `<TechnicalProfile Id="SM-sso">` of the type `DefaultSSOSessionProvider`
 - Connect it to the first technical profile in journey, in this example to `<TechnicalProfile Id="UserInformationCollector">`
