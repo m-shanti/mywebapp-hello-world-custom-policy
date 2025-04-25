@@ -5,7 +5,7 @@
       xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
       PolicySchemaVersion="0.3.0.0"
       TenantId="samplemwb2ctenant.onmicrosoft.com"
-      PolicyId="B2C_1A_SaveUserToAdB2cCustomPolicy_A"
+      PolicyId="B2C_1A_SaveUserToAdB2cCustomPolicy_B"
       PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_SimplestSsoCustomPolicy"
       DeploymentMode="Development"
         UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
@@ -149,10 +149,24 @@
                             </OutputClaims>
                         </TechnicalProfile>
 
+                        <TechnicalProfile Id="AAD-UserRead">
+                            <DisplayName>Read user from Azure AD storage</DisplayName>
+                            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                            <Metadata>
+                                <Item Key="Operation">Read</Item>
+                                <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">false</Item>
+                                <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+                            </Metadata>
+                            <InputClaims>
+                                <InputClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" Required="true" />
+                            </InputClaims>
+                            <OutputClaims>
+                                <OutputClaim ClaimTypeReferenceId="objectId" />
+                            </OutputClaims>
+                        </TechnicalProfile>
+
                     </TechnicalProfiles>
             </ClaimsProvider>
-
-
 
         </ClaimsProviders>
 
@@ -170,11 +184,23 @@
 
                     <OrchestrationStep Order="2" Type="ClaimsExchange">
                         <ClaimsExchanges>
+                          <ClaimsExchange Id="ReadUserFromAAD" TechnicalProfileReferenceId="AAD-UserRead" />
+                        </ClaimsExchanges>
+                    </OrchestrationStep>
+
+                    <OrchestrationStep Order="3" Type="ClaimsExchange">
+                        <Preconditions>
+                            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                                <Value>objectId</Value>
+                                <Action>SkipThisOrchestrationStep</Action>
+                            </Precondition>
+                        </Preconditions>
+                        <ClaimsExchanges>
                           <ClaimsExchange Id="WriteUserToAAD" TechnicalProfileReferenceId="AAD-UserWrite" />
                         </ClaimsExchanges>
                     </OrchestrationStep>
                       
-                    <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
+                    <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
                 
                 </OrchestrationSteps>
               </UserJourney>
