@@ -5,10 +5,14 @@
       xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
       PolicySchemaVersion="0.3.0.0"
       TenantId="samplemwb2ctenant.onmicrosoft.com"
-      PolicyId="B2C_1A_MfaAuthenticatorTotp_A"
-      PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_SimplestSsoCustomPolicy"
-      DeploymentMode="Development"
-        UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
+      PolicyId="TOTPCP_MfaAuthenticatorTotp_G"
+      PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/TOTPCP_MfaAuthenticatorTotp"
+      DeploymentMode="Development" UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
+        
+        <BasePolicy>
+          <TenantId>samplemwb2ctenant.onmicrosoft.com</TenantId>
+          <PolicyId>B2C_1A_TOTPCP_TrustFrameworkExtensions_TOTP</PolicyId>
+        </BasePolicy>
 
         <BuildingBlocks>
             <!-- Building Blocks Here-->
@@ -30,6 +34,16 @@
                     <UserHelpText>Your login</UserHelpText>
                     <UserInputType>TextBox</UserInputType>
                 </ClaimType>
+
+                <ClaimType Id="testMessage">
+                  <DisplayName>Test message</DisplayName>
+                  <DataType>string</DataType>
+              </ClaimType>
+
+              <ClaimType Id="eventName">
+                <DisplayName>Event name</DisplayName>
+                <DataType>string</DataType>
+            </ClaimType>
 
             </ClaimsSchema>
 
@@ -123,7 +137,74 @@
                 </TechnicalProfiles>
             </ClaimsProvider>
 
+            <ClaimsProvider>
+                    <DisplayName>Azure AD Technical Profiles</DisplayName>
+                    <TechnicalProfiles>
 
+                        <TechnicalProfile Id="AAD-UserWrite">
+                            <DisplayName>Write user information to AAD</DisplayName>
+                            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                            <Metadata>
+                                <Item Key="Operation">Write</Item>
+                                <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
+                                <Item Key="UserMessageIfClaimsPrincipalAlreadyExists">The account already exists. Try to create another account</Item>
+                            </Metadata>
+                            <InputClaims>
+                                <!-- The InputClaims element contains a claim, which is used to look up an account in the directory, or create a new one. -->
+                                <InputClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" Required="true" />
+                            </InputClaims>
+                            <PersistedClaims>
+                                <!-- The name of the claim is the name of the Microsoft Entra attribute unless the PartnerClaimType attribute is specified, which contains the Microsoft Entra attribute name. -->
+                                <PersistedClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" />
+                                <PersistedClaim ClaimTypeReferenceId="login" PartnerClaimType="displayName"/>
+                            </PersistedClaims>
+                            <OutputClaims>
+                                <OutputClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" />
+                            </OutputClaims>
+                        </TechnicalProfile>
+
+                        <TechnicalProfile Id="AAD-UserRead">
+                            <DisplayName>Read user from Azure AD storage</DisplayName>
+                            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                            <Metadata>
+                                <Item Key="Operation">Read</Item>
+                                <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">false</Item>
+                                <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+                            </Metadata>
+                            <InputClaims>
+                                <InputClaim ClaimTypeReferenceId="login" PartnerClaimType="signInNames.userName" Required="true" />
+                            </InputClaims>
+                            <OutputClaims>
+                                <OutputClaim ClaimTypeReferenceId="objectId" />
+                            </OutputClaims>
+                        </TechnicalProfile>
+
+                    </TechnicalProfiles>
+            </ClaimsProvider>
+
+            <ClaimsProvider>
+              <DisplayName>Application Insights</DisplayName>
+              <TechnicalProfiles>
+
+                <TechnicalProfile Id="AppInsights-Common">
+                  <DisplayName>Application Insights</DisplayName>
+                  <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.Insights.AzureApplicationInsightsProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                  <Metadata>
+                    <!-- The ApplicationInsights connection string, which you use for logging the events -->
+                    <Item Key="ConnectionString">InstrumentationKey=7f3c6c11-451b-4583-97b8-03e9cd287ed8;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/;ApplicationId=69530b56-6870-4626-8ef3-88eaad8b6d34</Item>
+                    <Item Key="DeveloperMode">true</Item>
+                    <Item Key="DisableTelemetry ">false</Item>
+                  </Metadata>
+                  <InputClaims>
+                    <!-- Properties of an event are added through the syntax {property:NAME}, where NAME is the property being added to the event. DefaultValue can be either a static value or a value that's resolved by one of the supported DefaultClaimResolvers. -->
+                    <InputClaim ClaimTypeReferenceId="testMessage" PartnerClaimType="{property:message}" DefaultValue="test message" />
+                       <!-- Dodaj claim dla eventName -->
+                   <InputClaim ClaimTypeReferenceId="eventName" DefaultValue="LogTestEvent" />  
+                  </InputClaims>
+                </TechnicalProfile>
+
+              </TechnicalProfiles>
+            </ClaimsProvider>
 
         </ClaimsProviders>
 
@@ -132,12 +213,45 @@
 
             <UserJourney Id="HelloWorldJourney">
                 <OrchestrationSteps>
+                    
                     <OrchestrationStep Order="1" Type="ClaimsExchange">
                         <ClaimsExchanges>
                             <ClaimsExchange Id="GetUserInformationClaimsExchange" TechnicalProfileReferenceId="UserInformationCollector"/>
                         </ClaimsExchanges>
                     </OrchestrationStep>
-                    <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
+
+                  <OrchestrationStep Order="2" Type="ClaimsExchange">
+                        <ClaimsExchanges>
+                          <ClaimsExchange Id="ReadUserFromAAD" TechnicalProfileReferenceId="AAD-UserRead" />
+                        </ClaimsExchanges>
+                    </OrchestrationStep>
+
+                    <OrchestrationStep Order="3" Type="ClaimsExchange">
+                        <Preconditions>
+                            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                                <Value>objectId</Value>
+                                <Action>SkipThisOrchestrationStep</Action>
+                            </Precondition>
+                        </Preconditions>
+                        <ClaimsExchanges>
+                          <ClaimsExchange Id="WriteUserToAAD" TechnicalProfileReferenceId="AAD-UserWrite" />
+                        </ClaimsExchanges>
+                    </OrchestrationStep>
+
+                    <!-- <OrchestrationStep Order="4" Type="InvokeSubJourney">
+                      <JourneyList>
+                        <Candidate SubJourneyReferenceId="TotpFactor-Input" />
+                      </JourneyList>
+                    </OrchestrationStep>
+            
+                    <OrchestrationStep Order="5" Type="InvokeSubJourney">
+                      <JourneyList>
+                        <Candidate SubJourneyReferenceId="TotpFactor-Verify" />
+                      </JourneyList>
+                    </OrchestrationStep> -->
+                      
+                    <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
+                
                 </OrchestrationSteps>
               </UserJourney>
         </UserJourneys>
@@ -151,7 +265,7 @@
             <DefaultUserJourney ReferenceId="HelloWorldJourney"/>
 
             <UserJourneyBehaviors>
-                <JourneyInsights InstrumentationKey="7f3c6c11-451b-4583-97b8-03e9cd287ed8" TelemetryEngine="ApplicationInsights" ConnectionString="InstrumentationKey=7f3c6c11-451b-4583-97b8-03e9cd287ed8;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/;ApplicationId=69530b56-6870-4626-8ef3-88eaad8b6d34" DeveloperMode="true" ClientEnabled="false" ServerEnabled="true" TelemetryVersion="1.0.0" />
+                <JourneyInsights InstrumentationKey="7f3c6c11-451b-4583-97b8-03e9cd287ed8" TelemetryEngine="ApplicationInsights" DeveloperMode="true" ClientEnabled="false" ServerEnabled="true" TelemetryVersion="1.0.0" />
             </UserJourneyBehaviors>
 
             <TechnicalProfile Id="HelloWorldPolicyProfile">

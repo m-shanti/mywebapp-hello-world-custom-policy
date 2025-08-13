@@ -35,3 +35,6 @@
 - Application Insights
   - https://learn.microsoft.com/en-us/azure/active-directory-b2c/troubleshoot-with-application-insights?pivots=b2c-custom-policy
   - https://learn.microsoft.com/en-us/azure/active-directory-b2c/analytics-with-application-insights?pivots=b2c-custom-policy
+  - https://microsoft.github.io/WhatTheHack/021-IdentityForApps/Student/10-appinsights.html
+  - https://learn.microsoft.com/en-us/azure/active-directory-b2c/analytics-with-application-insights?pivots=b2c-custom-policy
+  - https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/active-directory-b2c/troubleshoot.md
