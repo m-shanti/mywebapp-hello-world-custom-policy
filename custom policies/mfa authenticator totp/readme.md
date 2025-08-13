@@ -39,7 +39,15 @@ Here [Bad request when trying to get available strong authentication devices][3]
 
 `
 
+[Define a Microsoft Entra ID multifactor authentication technical profile in an Azure AD B2C custom policy][4]
+
+[Enable multifactor authentication in Azure Active Directory B2C][5] - pack of custom policies from MS. This is MFA out of the box B2C. Full magical integrated with B2C user objects.
+
+[DisplayControls][6] - among the others VerificationControl that validates one time codes. May be used separately without "box MFA"
 
 [1]: https://github.com/azure-ad-b2c/samples/tree/master/policies/totp
 [2]: https://learn.microsoft.com/en-us/azure/active-directory-b2c/display-control-time-based-one-time-password
 [3]: https://stackoverflow.com/questions/72576057/bad-request-when-trying-to-get-available-strong-authentication-devices
+[4]: https://learn.microsoft.com/en-us/azure/active-directory-b2c/multi-factor-auth-technical-profile
+[5]: https://learn.microsoft.com/en-us/azure/active-directory-b2c/multi-factor-authentication?pivots=b2c-custom-policy
+[6]: https://learn.microsoft.com/en-us/azure/active-directory-b2c/display-controls
