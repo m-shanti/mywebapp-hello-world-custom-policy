@@ -1,3 +1,5 @@
-- `hiddenPassword.xml` - pobranie hasła, dwa kolejne kroki i zapis uzytkownika. Pokazuje, ze hasło nie pojawia się w logach. Uzytkownik powstaje, ale jest "Disabled", bo nie dostal hasła. Hasło nie wyszło z pierwszego kroku
-- 
-- 
+- `hiddenPasswordNew.xml` - pobranie hasła, dwa kolejne kroki i wydanie tokenu. Pokazuje, ze hasło nie pojawia się w logach.
+- `hiddenPasswordNewAppInsight.xml` - dodanie App Insight
+- `hiddenPasswordNewAccountWriteAppInsight.xml` - dodanie zapisu uzytkownika. Uzytkownik powstaje, ale jest "Disabled", bo nie dostal hasła. Hasło nie wyszło z pierwszego kroku.
+  - `hiddenPasswordNewAccountAndPasswordWriteAppInsight.xml` - wstawienie zapisu hasła na koniec i podłaczenie do niego zapisu uzytkownika. W takim przypadku haslo zapisue sie poprawnie.
+  - `hiddenPasswordNewAccountWritePasswordPassingAppInsight.xml` - dodane ClaimTransformations, które przepisuja hasło do claim `plaintextPassword` i przekazują az do konca. Uzytkownik jest poprawny. W logach App Insight przy DeveloperMode="Development" lub "Debugging" widać hasło
