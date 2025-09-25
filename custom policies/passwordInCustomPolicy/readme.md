@@ -1,0 +1,3 @@
+- `hiddenPassword.xml` - pobranie hasła, dwa kolejne kroki i zapis uzytkownika. Pokazuje, ze hasło nie pojawia się w logach. Uzytkownik powstaje, ale jest "Disabled", bo nie dostal hasła. Hasło nie wyszło z pierwszego kroku
+- 
+- 

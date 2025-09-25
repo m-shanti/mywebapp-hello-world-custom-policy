@@ -43,7 +43,7 @@ Here [Bad request when trying to get available strong authentication devices][3]
 
 [Enable multifactor authentication in Azure Active Directory B2C][5] - pack of custom policies from MS. This is MFA out of the box B2C. Full magical integrated with B2C user objects.
 
-[DisplayControls][6] - among the others VerificationControl that validates one time codes. May be used separately without "box MFA"
+[DisplayControls][6] - among the others VerificationControl that validates one time codes. May be used separately without "box MFA". It's convenient because it generates TOTP based itself and validates time frame too. The only developer delivers is a service to send TOTP to the user.
 
 [1]: https://github.com/azure-ad-b2c/samples/tree/master/policies/totp
 [2]: https://learn.microsoft.com/en-us/azure/active-directory-b2c/display-control-time-based-one-time-password
