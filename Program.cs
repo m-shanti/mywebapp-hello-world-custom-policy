@@ -60,14 +60,6 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
         Console.WriteLine("Access Token:");
         Console.WriteLine(accessToken);
     };
-    options.Events.OnAuthorizationCodeReceived = async context =>
-    {
-        // var tokenResponse = context.TokenEndpointResponse;
-        // var accessToken = tokenResponse.AccessToken;
-
-        // Console.WriteLine("Access Token:");
-        // Console.WriteLine(accessToken);
-    };
 });
 
 var app = builder.Build();
