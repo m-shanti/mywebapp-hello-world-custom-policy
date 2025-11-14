@@ -39,7 +39,35 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
     options.Scope.Add("openid");
     options.Scope.Add("profile");
     options.Scope.Add("offline_access");
-    options.Scope.Add("f8f43193-dc83-49f2-a16a-27137bdd9767");
+
+    // options.Scope.Add("f8f43193-dc83-49f2-a16a-27137bdd9767");
+    // causes error: AADB2C90146: The scope provided in request specifies more than one resource for an access token, which is not supported.
+    
+    options.Scope.Add("https://samplemwb2ctenant.onmicrosoft.com/753fd60d-bf11-48d8-9ef4-31ab1e3aac21/access"); // WebAPI app
+    options.Events.OnTokenValidated = async context =>
+    {
+        // pobranie ID token
+        var idToken = context.SecurityToken as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
+        var rawIdToken = idToken.RawData;
+        
+
+        Console.WriteLine("ID Token:");
+        Console.WriteLine(rawIdToken);
+
+        var tokenResponse = context.TokenEndpointResponse;
+        var accessToken = tokenResponse.AccessToken;
+
+        Console.WriteLine("Access Token:");
+        Console.WriteLine(accessToken);
+    };
+    options.Events.OnAuthorizationCodeReceived = async context =>
+    {
+        // var tokenResponse = context.TokenEndpointResponse;
+        // var accessToken = tokenResponse.AccessToken;
+
+        // Console.WriteLine("Access Token:");
+        // Console.WriteLine(accessToken);
+    };
 });
 
 var app = builder.Build();
