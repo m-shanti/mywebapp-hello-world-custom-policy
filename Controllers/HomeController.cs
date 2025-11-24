@@ -20,19 +20,51 @@ public class HomeController : Controller
         _oidcOptions = oidcOptions;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
+    {
+        string token = await GetClientCredentialsTokenAsync();
+        return Content(token);
+    }
+
+    private void GetTokenWithStandardAd()
     {
         IConfidentialClientApplication msalClient = ConfidentialClientApplicationBuilder.Create(_oidcOptions.Value.ClientId)
-                    .WithClientSecret(_oidcOptions.Value.ClientSecret)
-                    .WithAuthority(new Uri(_oidcOptions.Value.Authority))
-                    .Build();
+            .WithClientSecret(_oidcOptions.Value.ClientSecret)
+            .WithAuthority(_oidcOptions.Value.Authority)
+            .Build();
 
         msalClient.AddInMemoryTokenCache();
-        msalClient.AcquireTokenForClient(new string[] { "https://graph.microsoft.com/.default" }).WithExtraQueryParameters("OnBehalfOf=user456").ExecuteAsync();
+        AuthenticationResult authResult = msalClient.AcquireTokenForClient(new string[] { "https://samplemwb2ctenant.onmicrosoft.com/753fd60d-bf11-48d8-9ef4-31ab1e3aac21/.default" })
+            .WithExtraQueryParameters("OnBehalfOf=user456")
+            .ExecuteAsync().Result;
 
-        //AuthenticationResult msalAuthenticationResult = await msalClient.AcquireTokenForClient(new string[] { "https://graph.microsoft.com/.default" }).ExecuteAsync();
+        Console.WriteLine("Access token OBO");
+        Console.WriteLine(authResult.AccessToken);
+    }
 
-        return View();
+    private async Task<string> GetClientCredentialsTokenAsync()
+    {
+        //var tokenEndpoint =           $"{_oidcOptions.Instance}/{_oidcOptions.Domain}/{_oidcOptions.SignUpSignInPolicyId}/oauth2/v2.0/token";
+        var tokenEndpoint = "https://samplemwb2ctenant.b2clogin.com/samplemwb2ctenant.onmicrosoft.com/B2C_1A_ClientCredentialsCustomPolicyPlusCustomParam_H/oauth2/v2.0/token";
+
+        using var client = new HttpClient();
+
+        var parameters = new Dictionary<string, string>
+        {
+            { "client_id", _oidcOptions.Value.ClientId },
+            { "client_secret", _oidcOptions.Value.ClientSecret },
+            { "grant_type", "client_credentials" },
+            { "scope", "https://samplemwb2ctenant.onmicrosoft.com/753fd60d-bf11-48d8-9ef4-31ab1e3aac21/.default" },
+            { "OnBehalfOf", "user456"}
+        };
+
+        var response = await client.PostAsync(tokenEndpoint, new FormUrlEncodedContent(parameters));
+
+        //response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        return json;
     }
 
     public IActionResult Privacy()

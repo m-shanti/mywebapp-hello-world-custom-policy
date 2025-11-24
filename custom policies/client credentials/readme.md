@@ -43,7 +43,7 @@ and most important line
 The solution from
 https://blog.wojtek.pro/aad-b2c-quick-tips-query-string-parameters/
 
-Client Cr request:
+Client Credential request with extra param `OnBehalfOf`:
 ```
 POST https://samplemwb2ctenant.b2clogin.com/samplemwb2ctenant.onmicrosoft.com/B2C_1A_ClientCredentialsCustomPolicyPlusCustomParam_H/oauth2/v2.0/token
 Content-Type: application/x-www-form-urlencoded
@@ -53,4 +53,27 @@ client_id=f8f43193-dc83-49f2-a16a-27137bdd9767
     &client_secret=***
     &grant_type=client_credentials
 &OnBehalfOf=user123
+```
+
+and in result we achieve token containing `OnBehalfOf` claim:
+
+```
+{
+  "aud": "753fd60d-bf11-48d8-9ef4-31ab1e3aac21",
+  "iss": "https://samplemwb2ctenant.b2clogin.com/08beb0c6-8f0a-44e8-9771-54d58fbf5009/v2.0/",
+  "exp": 1763974400,
+  "nbf": 1763970800,
+  "OnBehalfOf": "user123",
+  "Credentials": "OAuth 2.0 Client Credentials",
+  "RandomValue": "969252840",
+  "sub": "abcd-1234-efgh-5678-ijkl-etc.",
+  "message": "Hello World!",
+  "login": "empty login",
+  "azpacr": "1",
+  "oid": "373a026e-aca6-4166-8d59-1cd3e3d0e2aa",
+  "tid": "08beb0c6-8f0a-44e8-9771-54d58fbf5009",
+  "ver": "2.0",
+  "azp": "f8f43193-dc83-49f2-a16a-27137bdd9767",
+  "iat": 1763970800
+}
 ```
