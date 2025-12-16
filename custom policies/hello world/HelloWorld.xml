@@ -64,6 +64,8 @@
                 </TechnicalProfile>
             </TechnicalProfiles>
         </ClaimsProvider>
+        
+    <ClaimsProviders>
 
     <UserJourneys>
         <!-- User Journeys Here-->
