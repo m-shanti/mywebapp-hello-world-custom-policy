@@ -85,7 +85,7 @@
             <DisplayName>Hello World Policy Profile</DisplayName>
             <Protocol Name="OpenIdConnect" />
             <OutputClaims>
-                <OutputClaim ClaimTypeReferenceId="message"/>
+                <OutputClaim ClaimTypeReferenceId="message"  DefaultValue="Hello World!"/>
             </OutputClaims>
         </TechnicalProfile>
     </RelyingParty>
