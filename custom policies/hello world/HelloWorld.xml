@@ -89,6 +89,7 @@
             <OutputClaims>
                 <OutputClaim ClaimTypeReferenceId="message"  DefaultValue="Hello World!"/>
             </OutputClaims>
+            <SubjectNamingInfo ClaimType="message" />
         </TechnicalProfile>
     </RelyingParty>
 </TrustFrameworkPolicy>
