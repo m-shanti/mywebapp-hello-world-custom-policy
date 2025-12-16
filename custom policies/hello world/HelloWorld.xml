@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
     PolicySchemaVersion="0.3.0.0"
     TenantId="samplemwb2ctenant.onmicrosoft.com"
-    PolicyId="B2C_1A_HelloWorld"
+    PolicyId="B2C_1A_HelloWorld_A"
     PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_HelloWorld">
 
     <BuildingBlocks>
@@ -71,7 +71,7 @@
         <!-- User Journeys Here-->
         <UserJourney Id="HelloWorldJourney">
             <OrchestrationSteps>
-                <OrchestrationStep Order="1" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+                <OrchestrationStep Order="1" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer"/>
             </OrchestrationSteps>
         </UserJourney>
     </UserJourneys>
