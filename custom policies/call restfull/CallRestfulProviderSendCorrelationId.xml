@@ -4,8 +4,8 @@
     xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
     PolicySchemaVersion="0.3.0.0"
     TenantId="samplemwb2ctenant.onmicrosoft.com"
-    PolicyId="B2C_1A_CallRestfulProvider_O"
-    PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_CallRestfulProvider"
+    PolicyId="B2C_1A_CallRestfulProviderSendCorrelationId_K"
+    PublicPolicyUri="http://samplemwb2ctenant.onmicrosoft.com/B2C_1A_CallRestfulProviderSendCorrelationId"
     DeploymentMode="Development"
     UserJourneyRecorderEndpoint="urn:journeyrecorder:applicationinsights">
 
@@ -18,13 +18,16 @@
                 <UserHelpText>Message in token</UserHelpText>
                 <UserInputType>TextBox</UserInputType>
             </ClaimType>
-            <ClaimType Id="bearerToken">
-                <DisplayName>Bearer token</DisplayName>
+            <ClaimType Id="corrId">
+                <DisplayName>correlation ID</DisplayName>
                 <DataType>string</DataType>
-                <UserHelpText>Bearer token</UserHelpText>
-                <UserInputType>TextBox</UserInputType>
+            </ClaimType>
+            <ClaimType Id="correlationId">
+                <DisplayName>correlation ID</DisplayName>
+                <DataType>string</DataType>
             </ClaimType>
         </ClaimsSchema>
+
         <ContentDefinitions>
             <ContentDefinition Id="SelfAssertedContentDefinition">
                 <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
@@ -84,11 +87,9 @@
                         </Metadata>
                         <DisplayClaims>
                             <DisplayClaim ClaimTypeReferenceId="message" Required="true"/>
-                            <DisplayClaim ClaimTypeReferenceId="bearerToken" Required="true"/>
                         </DisplayClaims>
                         <OutputClaims>
                             <OutputClaim ClaimTypeReferenceId="message"/>
-                            <OutputClaim ClaimTypeReferenceId="bearerToken"/>
                         </OutputClaims>
                     </TechnicalProfile>
                 </TechnicalProfiles>
@@ -101,24 +102,21 @@
           <DisplayName>Get user's details using Graph API</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ServiceUrl">http://restfullprovider-get.free.beeceptor.com/{message}</Item>
+            <Item Key="ServiceUrl">http://restfullprovider-get.free.beeceptor.com/{corrId}</Item>
             <Item Key="SendClaimsIn">Url</Item>
-            <Item Key="AuthenticationType">Bearer</Item>
-            <Item Key="UseClaimAsBearerToken">bearerToken</Item>
+            <Item Key="AuthenticationType">None</Item>
             <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
             <Item Key="ClaimResolverUrlFormatting">true</Item>
             <Item Key="ResolveJsonPathsInJsonTokens">true</Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="message" /> 
-            <InputClaim ClaimTypeReferenceId="bearerToken" /> 
+            <InputClaim ClaimTypeReferenceId="corrId" DefaultValue="{Context:CorrelationId}"/>
           </InputClaims>
-          <OutputClaims>          
-          </OutputClaims>
         </TechnicalProfile>
     </TechnicalProfiles>
     </ClaimsProvider>
-        
+
+
     </ClaimsProviders>
 
     <UserJourneys>
@@ -156,6 +154,7 @@
             <Protocol Name="OpenIdConnect" />
             <OutputClaims>
                 <OutputClaim ClaimTypeReferenceId="message"/>
+                <OutputClaim ClaimTypeReferenceId="correlationId" DefaultValue="{Context:CorrelationId}"/>
             </OutputClaims>
             <SubjectNamingInfo ClaimType="message" />
         </TechnicalProfile>
