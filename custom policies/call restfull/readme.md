@@ -1,4 +1,4 @@
-# Description
+# CallRestfulProvider.xml
 
 Custom policies gets:
 - `message`
@@ -9,7 +9,7 @@ from the user and send them to mock server
 
 `message` is sent in Url and `bearerToken` is sent as `Authorization` header.
 
-You can run custom policy and see result in beeceptor https://app.beeceptor.com/console/restfullprovider-get:
+You can run custom policy and see results in beeceptor https://app.beeceptor.com/console/restfullprovider-get:
 - it gets `message` from Url
 - and Authorization header
 
@@ -17,18 +17,15 @@ You can run custom policy and see result in beeceptor https://app.beeceptor.com/
 ![beeceptor](beeceptor.png)
 
 
+# CallRestfulProviderSendCorrelationId.xml
 
-[x] Visual Studio
+Custom policy sends Correlation ID in two ways:
+- in the token issued
+- in the request to REST service
 
-[x] Simple hello
-
-[x] Prepare mock on https://free.beeceptor.com
-
-[x] PoC on passing values in GET
-
-[ ] PoC on passing Correlation ID
-
-https://learn.microsoft.com/en-us/azure/active-directory-b2c/troubleshoot?pivots=b2c-custom-policy
+References:
+- https://learn.microsoft.com/en-us/azure/active-directory-b2c/troubleshoot?pivots=b2c-custom-policy
+- https://learn.microsoft.com/en-us/azure/active-directory-b2c/claim-resolver-overview
 
 ```
 {
@@ -47,4 +44,3 @@ https://learn.microsoft.com/en-us/azure/active-directory-b2c/troubleshoot?pivots
 }
 ```
 
-https://learn.microsoft.com/en-us/azure/active-directory-b2c/claim-resolver-overview
